@@ -1,4 +1,4 @@
-RegletasXcode
-=============
+EGRegletAppPrimera
+==================
 
-Libreria de Regletas
+Primera versión de RegletApp
