@@ -32,6 +32,9 @@
 - (IBAction)nueveAction:(id)sender;
 - (IBAction)diezAction:(id)sender;
 
+- (IBAction)SwitchValor:(id)sender;
+
+
 @property (weak, nonatomic) IBOutlet UIImageView *arcoMenuView;
 - (IBAction)menuButtonAction:(id)sender;
 @property (weak, nonatomic) IBOutlet UIButton *nuevaHojaButtonOutlet;

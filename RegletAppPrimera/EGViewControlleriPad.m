@@ -19,7 +19,9 @@
     UITapGestureRecognizer *tapMoverRegleta;
     UIPinchGestureRecognizer *pinchGirarRegleta;
     NSArray *botonesArray;
+    NSMutableArray *regletasUsadas;
     BOOL semaforoMenuButton;
+    UISwitch *mySwitch;
 }
 @synthesize regleta3, regleta6;
 
@@ -50,6 +52,9 @@
     _diezButtonOutlet.backgroundColor = [UIColor colorWithRed:1.000 green:0.385 blue:0.000 alpha:1.000];
 
     regleta = [CALayer layer];
+    regletasUsadas = [[NSMutableArray alloc] init];
+    mySwitch =[[UISwitch alloc] init];
+    
    // panMoverRegleta = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(moverRegleta:)];
    // tapMoverRegleta = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(moverRegleta:)];
 
@@ -88,7 +93,6 @@
     _visualizacionButtonOutlet.alpha = 0;
     _arcoMenuView.alpha = 0;
 
-
     
     
 }
@@ -113,8 +117,20 @@
 }
 
 
+- (IBAction)SwitchValor:(id)sender{
+    mySwitch = sender;
+    if ([mySwitch isOn]) {
+        for (int i=0; i<regletasUsadas.count; i++) {
+            [[regletasUsadas objectAtIndex:i] showValor];
+        } ;
+    } else {
+        for (int i=0; i<regletasUsadas.count; i++) {
+            [[regletasUsadas objectAtIndex:i] hideValor];
+        } ;
+    }
+}
 
--(void)crearRegleta: (UIButton *)button conAncho:(float)ancho conAlto:(float)alto conImagen:(UIImage *)imagen
+-(void)crearRegleta: (UIButton *)button conAncho:(float)ancho conAlto:(float)alto conImagen:(UIImage *)imagen conValor:(int)valor
 {
     
     CGRect dimensionesRegleta = CGRectMake(button.center.x,button.center.y, ancho, alto);
@@ -124,7 +140,15 @@
     regletaVista.delegate = self;
     regletaVista.contentView = regletaImagenView;//contentView;
     [regletaVista hideEditingHandles];
+    regletaVista.valorRegleta.text = [NSString stringWithFormat:@"%i",valor];
     [self.view addSubview:regletaVista];
+    [regletasUsadas addObject:regletaVista];
+    if (![mySwitch isOn]) {
+        [regletaVista hideValor];
+    }
+    
+    
+    
     
 }
 
@@ -138,7 +162,7 @@
 }
 - (IBAction)tresAction:(id)sender
 {
-    [self crearRegleta:sender conAncho:120 conAlto:40 conImagen:regleta3];
+    [self crearRegleta:sender conAncho:160 conAlto:80 conImagen:regleta3 conValor:3];
     
 }
 - (IBAction)cuatroAction:(id)sender
@@ -151,7 +175,7 @@
 }
 - (IBAction)seisAction:(id)sender
 {
-    [self crearRegleta:sender conAncho:240 conAlto:40 conImagen:regleta6];
+    [self crearRegleta:sender conAncho:280 conAlto:80 conImagen:regleta6 conValor:6];
 }
 - (IBAction)sieteAction:(id)sender
 {
@@ -169,6 +193,7 @@
 {
     //[self crearRegleta:sender conAncho:400 conAlto:40];
 }
+
 
 
 - (IBAction)menuButtonAction:(id)sender
@@ -302,6 +327,11 @@
     agrupacionAnimaciones.animations = [NSArray arrayWithObjects:temblarX,temblarY, nil];
     agrupacionAnimaciones.duration = 4.0;
     [sender addAnimation:agrupacionAnimaciones forKey:@"temblar"];
+}
+
+#pragma delegado que elimina la regleta del NSMutableArray
+- (void)stickerViewDidClose:(regletaView *)sticker{
+    [regletasUsadas removeObjectIdenticalTo:sticker];
 }
 
 @end

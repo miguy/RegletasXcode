@@ -32,10 +32,12 @@ typedef enum {
 @property (nonatomic) CGFloat minHeight;
 @property (nonatomic) BOOL botonesRegleta;
 @property  (nonatomic)  BOOL bloquearRegleta;
+@property (nonatomic) UILabel *valorRegleta;
 
 @property (strong, nonatomic) id <ZDStickerViewDelegate> delegate;
 
-- (void)hideDelHandle;
+- (void)hideValor;
+- (void)showValor;
 - (void)showEditingHandlesmoved;
 - (void)hideEditingHandles;
 - (void)showEditingHandles;

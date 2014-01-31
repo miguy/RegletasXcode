@@ -8,10 +8,10 @@
 #import "regletaView.h"
 #import <QuartzCore/QuartzCore.h>
 
-#define kSPUserResizableViewGlobalInset 0.0
+#define kSPUserResizableViewGlobalInset 20.0
 #define kSPUserResizableViewDefaultMinWidth 48.0
 #define kSPUserResizableViewInteractiveBorderSize 0.0
-#define kZDStickerViewControlSize 36.0
+#define kZDStickerViewControlSize 48.0
 
 
 @interface regletaView ()
@@ -31,7 +31,7 @@
 @end
 
 @implementation regletaView
-@synthesize contentView, touchStart, botonesRegleta, bloquearRegleta;
+@synthesize contentView, touchStart, botonesRegleta, bloquearRegleta, valorRegleta;
 
 @synthesize prevPoint;
 @synthesize deltaAngle, startTransform; //rotation
@@ -66,7 +66,7 @@
 
 //Metodo para el boton eliminar la regleta
 
--(void)singleTap:(UIPanGestureRecognizer *)recognizer
+-(void)TapBorrar:(UITapGestureRecognizer *)recognizer
 {
     if (NO == self.preventsDeleting) {
         UIView * close = (UIView *)[recognizer view];
@@ -108,14 +108,14 @@
             self.preventsResizing = YES;
             self.preventsDeleting = YES;
             self.bloquearRegleta = YES;
-            customControl.image = [UIImage imageNamed:@"unblock.png" ];
+            customControl.image = [UIImage imageNamed:@"block.png" ];
             [self showCustmomHandle];
         }else{
             //Cuando esta desbloqueada: mostramos los botones y cambiamos el boton de bloqueo
             self.preventsResizing = NO;
             self.preventsDeleting = NO;
             self.bloquearRegleta = NO;
-            customControl.image = [UIImage imageNamed:@"block.png" ];
+            customControl.image = [UIImage imageNamed:@"unblock.png" ];
         }
         if([_delegate respondsToSelector:@selector(stickerViewDidCustomButtonTap:)]) {
             [_delegate stickerViewDidCustomButtonTap:self];
@@ -144,8 +144,8 @@
                                        self.bounds.size.height+kZDStickerViewControlSize,
                                               kZDStickerViewControlSize,
                                               kZDStickerViewControlSize);
-            deleteControl.frame = CGRectMake(-18, -18,
-                                             kZDStickerViewControlSize, kZDStickerViewControlSize);
+            deleteControl.frame = CGRectMake(-21, -21,
+                                             40, 40);
             customControl.frame =CGRectMake(self.bounds.size.width-kZDStickerViewControlSize,
                                               0,
                                               kZDStickerViewControlSize,
@@ -210,21 +210,21 @@
     
     //Inicializamos la posicion del boton borrar
     deleteControl = [[UIImageView alloc]initWithFrame:CGRectMake(-10, -10,
-                                                                 21, 21)];
+                                                                 40, 40)];
     deleteControl.backgroundColor = [UIColor clearColor];
     deleteControl.image = [UIImage imageNamed:@"cerrar.png" ];
     deleteControl.userInteractionEnabled = YES;
-    UITapGestureRecognizer * singleTap = [[UITapGestureRecognizer alloc]
+    UITapGestureRecognizer * singleTapBorrar = [[UITapGestureRecognizer alloc]
                                           initWithTarget:self
-                                          action:@selector(singleTap:)];
-    [deleteControl addGestureRecognizer:singleTap];
+                                          action:@selector(TapBorrar:)];
+    [deleteControl addGestureRecognizer:singleTapBorrar];
     
     [self addSubview:deleteControl];
     
     //Inicializamos la posicion del boton girar
-    resizingControl = [[UIImageView alloc]initWithFrame:CGRectMake(self.frame.size.width-10,
-                                                                   self.frame.size.height-10,
-                                                                   21, 21)];
+    resizingControl = [[UIImageView alloc]initWithFrame:CGRectMake(self.frame.size.width-30,
+                                                                   self.frame.size.height-30,
+                                                                   40, 40)];
     resizingControl.backgroundColor = [UIColor clearColor];
     resizingControl.userInteractionEnabled = YES;
     resizingControl.image = [UIImage imageNamed:@"girar.png" ];
@@ -235,17 +235,24 @@
     [self addSubview:resizingControl];
     
     //Inicializamos la posicion del boton bloquear
-    customControl = [[UIImageView alloc]initWithFrame:CGRectMake(self.frame.size.width-10,
+    customControl = [[UIImageView alloc]initWithFrame:CGRectMake(self.frame.size.width-30,
                                                                    -10,
-                                                                   21, 21)];
+                                                                   40, 40)];
     customControl.backgroundColor = [UIColor clearColor];
     customControl.userInteractionEnabled = YES;
-    customControl.image = [UIImage imageNamed:@"block.png" ];
+    customControl.image = [UIImage imageNamed:@"unblock.png" ];
     UITapGestureRecognizer * customTapGesture = [[UITapGestureRecognizer alloc]
                                           initWithTarget:self
                                           action:@selector(customTap:)];
     [customControl addGestureRecognizer:customTapGesture];
     [self addSubview:customControl];
+    
+    //Iniciamos el valor de la regleta
+    valorRegleta = [[UILabel alloc] init];
+    valorRegleta.frame = CGRectMake(30, 20, 40, 40);
+    valorRegleta.textColor = [UIColor whiteColor];
+    valorRegleta.text = [NSString stringWithFormat:@""];
+    [self addSubview:valorRegleta];
     
     
     deltaAngle = atan2(self.frame.origin.y+self.frame.size.height - self.center.y,
@@ -291,7 +298,7 @@
     [self bringSubviewToFront:resizingControl];
     [self bringSubviewToFront:deleteControl];
     [self bringSubviewToFront:customControl];
-    
+    [self bringSubviewToFront:valorRegleta];
 }
 
 - (void)setFrame:(CGRect)newFrame {
@@ -395,9 +402,13 @@
 
 
 //Botones de la regleta
-- (void)hideDelHandle
+- (void)hideValor
 {
-    deleteControl.hidden = YES;
+    valorRegleta.hidden = YES;
+}
+- (void)showValor
+{
+    valorRegleta.hidden = NO;
 }
 
 - (void)showEditingHandlesmoved
